@@ -47,6 +47,8 @@ struct Transmitter {
     u8 music_shutdown;
     u8 extra_hardware;
     enum Mode mode;
+    u16 voltage_numerator;
+    u16 voltage_offset;
     u16 batt_alarm;
     u16 batt_critical;
     u16 batt_warning_interval;
@@ -59,7 +61,7 @@ struct Transmitter {
 #if HAS_RTC
     u8 rtcflags;    // bit0: clock12hr, bit1-3: time format, bit4-7 date format (see pages/320x240x16/rtc_config.c)
 #endif
-    
+
     #ifdef HAS_MORE_THAN_32_INPUTS
         u64 ignore_src;
     #else
