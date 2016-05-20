@@ -27,6 +27,9 @@ const char SWITCH_CFG[] = "extra-switches";
 const char BUTTON_CFG[] = "extra-buttons";
 #endif
 const char HAPTIC_ENABLE[] = "enable-haptic";
+/* Voltage Calibration */
+const char VOLTAGE_NUMERATOR[] = "voltage-numerator";
+const char VOLTAGE_OFFSET[] = "voltage-offset";
 /* Section: TX Module */
 static const char SECTION_MODULES[] = "modules";
 static const char MODULE_ENABLE_PIN[] = "enable";
@@ -76,6 +79,12 @@ static int ini_handler(void* user, const char* section, const char* name, const 
 #endif
         if(MATCH_KEY("txid")) {
             Transmitter.txid = strtol(value, NULL, 16);
+        }
+        if(MATCH_KEY(VOLTAGE_NUMERATOR)) {
+            Transmitter.voltage_numerator = value_int;
+        }
+        if(MATCH_KEY(VOLTAGE_OFFSET)) {
+            Transmitter.voltage_offset = value_int;
         }
         return 1;
     }
