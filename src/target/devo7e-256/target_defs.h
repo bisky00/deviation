@@ -53,7 +53,8 @@
 #endif
 
 /* Compute voltage from y = 2.1592x + 0.2493 */
+/*
 #define VOLTAGE_NUMERATOR 216
 #define VOLTAGE_OFFSET    249
-
+*/
 #endif //_DEVO7E_TARGET_H_

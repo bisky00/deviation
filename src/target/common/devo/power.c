@@ -17,6 +17,7 @@
 #include <libopencm3/cm3/scb.h>
 #include "common.h"
 #include "devo.h"
+#include "config/tx.h"
 
 void PWR_Init(void)
 {
@@ -85,7 +86,7 @@ unsigned PWR_ReadVoltage(void)
 {
     u32 v = adc_array_raw[NUM_ADC_CHANNELS-1];
     /* Multily the above by 1000 to get milivolts */
-    v = v * VOLTAGE_NUMERATOR / 100 + VOLTAGE_OFFSET;
+    v = v * Transmitter.voltage_numerator / 100 + Transmitter.voltage_offset;
     return v;
 }
 
