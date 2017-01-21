@@ -1,6 +1,10 @@
 #ifndef _TELEMETRY_H_
 #define _TELEMETRY_H_
 
+#if !defined(HAS_EXTENDED_TELEMETRY)
+#define HAS_EXTENDED_TELEMETRY 0
+#endif
+
 #define TELEM_ERROR_TIME 5000
 #define TELEM_NUM_ALARMS 6
 
@@ -306,6 +310,5 @@ u32 TELEMETRY_IsUpdated(int val);
 void TELEMETRY_SetUpdated(int telem);
 int TELEMETRY_Type();
 void TELEMETRY_SetType(int type);
-void TELEMETRY_SetTypeByProtocol(enum Protocols protocol);
 int TELEMETRY_GetNumTelemSrc();
 #endif

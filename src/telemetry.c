@@ -285,16 +285,6 @@ int TELEMETRY_GetNumTelemSrc()
     return TELEM_FRSKY_LAST-1;
 }
 
-void TELEMETRY_SetTypeByProtocol(enum Protocols protocol)
-{
-    if (protocol == PROTOCOL_DSM2 || protocol == PROTOCOL_DSMX)
-        TELEMETRY_SetType(TELEM_DSM);
-    else if (protocol == PROTOCOL_FRSKY2WAY || protocol == PROTOCOL_FRSKYX)
-        TELEMETRY_SetType(TELEM_FRSKY);
-    else
-        TELEMETRY_SetType(TELEM_DEVO);
-}
-
 void TELEMETRY_SetType(int type)
 {
     unsigned  cap = Telemetry.capabilities & ~CAP_TYPEMASK;
