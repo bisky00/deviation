@@ -18,8 +18,17 @@
 #include "interface.h"
 #include "config/model.h"
 #include "config/tx.h"
+#include "protospi.h"
 
 #include <stdlib.h>
+
+#if !defined(HAS_4IN1_FLASH)
+#define HAS_4IN1_FLASH 0
+#elif defined(EMULATOR)
+// Disable for emulator
+#undef HAS_4IN1_FLASH
+#define HAS_4IN1_FLASH 0
+#endif
 
 extern struct FAT FontFAT; //defined in screen/lcd_string.c
 
@@ -171,6 +180,10 @@ void PROTOCOL_Load(int no_dlg)
     #undef PROTODEF
 #endif
     PROTOCOL_SetSwitch(get_module(Model.protocol));
+    if (PROTOCOL_GetTelemetryState() != PROTO_TELEM_UNSUPPORTED) {
+        memset(&Telemetry, 0, sizeof(Telemetry));
+        TELEMETRY_SetType(PROTOCOL_GetTelemetryType());
+    }
 }
  
 u8 PROTOCOL_WaitingForSafe()
@@ -317,6 +330,14 @@ int PROTOCOL_GetTelemetryState()
     return telem_state;
 }
 
+int PROTOCOL_GetTelemetryType()
+{
+    int telem_type = TELEM_DEVO;
+    if(Model.protocol != PROTOCOL_NONE && PROTOCOL_LOADED)
+        telem_type = (long)PROTO_Cmds(PROTOCMD_TELEMETRYTYPE);
+    return telem_type;
+}
+
 void PROTOCOL_CheckDialogs()
 {
     if (proto_state & PROTO_MODULEDLG) {
@@ -353,18 +374,37 @@ static int get_module(int idx)
 
 int PROTOCOL_HasModule(int idx)
 {
+// If you need to enable hardware.ini [modules] to
+// enable/disable individual modules for 4-in-1 flash
+// replace the condition with #if 0.
+#if HAS_4IN1_FLASH
+    if (SPISwitch_Present()) {
+        return 1;
+    } else {
+#endif        
     int m = get_module(idx);
     if(m == TX_MODULE_LAST || Transmitter.module_enable[m].port != 0)
         return 1;
     return 0;
+#if HAS_4IN1_FLASH
+    }
+#endif
 }
 
 int PROTOCOL_HasPowerAmp(int idx)
 {
+#if HAS_4IN1_FLASH
+    if (SPISwitch_Present()) {
+        return 1;
+    } else {
+#endif        
     int m = get_module(idx);
     if(m != TX_MODULE_LAST && Transmitter.module_poweramp & (1 << m))
         return 1;
     return 0;
+#if HAS_4IN1_FLASH
+    }
+#endif
 }
 
 int PROTOCOL_SetSwitch(int module)
@@ -456,4 +496,54 @@ void PROTOCOL_InitModules()
     {
         PROTOCOL_Init(0);
     }
+}
+
+void PROTO_CS_HI(int module)
+{
+#if HAS_4IN1_FLASH
+    if (SPISwitch_Present()) {
+        SPISwitch_CS_HI(module);
+    } else {
+#endif        
+#if HAS_MULTIMOD_SUPPORT
+    if (MODULE_ENABLE[MULTIMOD].port) {
+        //We need to set the multimodule CSN even if we don't use it
+        //for this protocol so that it doesn't interpret commands
+        PROTOSPI_pin_set(MODULE_ENABLE[MULTIMOD]);
+        if(MODULE_ENABLE[module].port == SWITCH_ADDRESS) {
+            for(int i = 0; i < 20; i++)
+                _NOP();
+            return;
+        }
+    }
+#endif
+    PROTOSPI_pin_set(MODULE_ENABLE[module]);
+#if HAS_4IN1_FLASH
+    }
+#endif
+}
+
+void PROTO_CS_LO(int module)
+{
+#if HAS_4IN1_FLASH
+    if (SPISwitch_Present()) {
+        SPISwitch_CS_LO(module);
+    } else {
+#endif
+#if HAS_MULTIMOD_SUPPORT
+    if (MODULE_ENABLE[MULTIMOD].port) {
+        //We need to set the multimodule CSN even if we don't use it
+        //for this protocol so that it doesn't interpret commands
+        PROTOSPI_pin_clear(MODULE_ENABLE[MULTIMOD]);
+        if(MODULE_ENABLE[module].port == SWITCH_ADDRESS) {
+            for(int i = 0; i < 20; i++)
+                _NOP();
+            return;
+        }
+    }
+#endif
+    PROTOSPI_pin_clear(MODULE_ENABLE[module]);
+#if HAS_4IN1_FLASH
+    }
+#endif
 }

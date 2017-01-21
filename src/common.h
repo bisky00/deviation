@@ -34,6 +34,13 @@ struct FAT {
     char a[FILE_SIZE];
 };
 
+//Compatibility with Atmega
+#define FLASHBYTETABLE static const u8
+#define FLASHWORDTABLE static const u16
+#define pgm_read_word(x) (*(x))
+#define pgm_read_byte(x) (*(x))
+void PROTO_CS_HI(int module);
+void PROTO_CS_LO(int module);
 
 extern volatile s32 Channels[NUM_OUT_CHANNELS];
 extern const char DeviationVersion[33];
@@ -161,6 +168,7 @@ u32 PROTOCOL_CurrentID();
 const char **PROTOCOL_GetOptions();
 void PROTOCOL_SetOptions();
 int PROTOCOL_GetTelemetryState();
+int PROTOCOL_GetTelemetryType();
 int PROTOCOL_MapChannel(int input, int default_ch);
 int PROTOCOL_HasModule(int idx);
 int PROTOCOL_HasPowerAmp(int idx);
