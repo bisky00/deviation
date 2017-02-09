@@ -70,8 +70,8 @@ struct LabelDesc {
 
 struct ImageMap {
     const char *file;
-    u8 width;
-    u8 height;
+    u16 width;
+    u16 height;
     u16 x_off;
     u16 y_off;
 };
@@ -165,7 +165,6 @@ typedef struct guiButton {
     const char *(*strCallback)(struct guiObject *obj, const void *data);
     void (*CallBack)(struct guiObject *obj, const void *data);
     const void *cb_data;
-    u16 fontColor;
     u8 flags;
 } guiButton_t;
 
@@ -336,10 +335,10 @@ guiObject_t *GUI_CreateImageOffset(guiImage_t *, u16 x, u16 y, u16 width, u16 he
 
 guiObject_t *GUI_CreateButton(guiButton_t *, u16 x, u16 y, enum ButtonType type,
         const char *(*strCallback)(guiObject_t *, const void *),
-        u16 fontColor, void (*CallBack)(guiObject_t *obj, const void *data), const void *cb_data);
+        void (*CallBack)(guiObject_t *obj, const void *data), const void *cb_data);
 guiObject_t *GUI_CreateButtonPlateText(guiButton_t *, u16 x, u16 y, u16 width, u16 height, const struct LabelDesc *desc,
         const char *(*strCallback)(guiObject_t *, const void *),
-        u16 fontColor, void (*CallBack)(guiObject_t *obj, const void *data), const void *cb_data);
+        void (*CallBack)(guiObject_t *obj, const void *data), const void *cb_data);
 guiObject_t *GUI_CreateIcon(guiButton_t *, u16 x, u16 y, const struct ImageMap *image,
         void (*CallBack)(guiObject_t *obj, const void *data), const void *cb_data);
 int GUI_TouchButton(struct guiObject *obj, int press_type);
