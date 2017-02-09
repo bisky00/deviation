@@ -19,6 +19,7 @@ ifdef WINDOWS
         CFLAGS += -mno-cygwin
     else
         FLTK_DIR ?= /usr/local
+        PORTAUDIO_DIR ?= /usr/local
         LFLAGS += -static-libgcc -static-libstdc++
     endif
     LFLAGS := -L$(FLTK_DIR)/lib -L$(PORTAUDIO_DIR)/lib $(LFLAGS) -lole32 -luuid -lcomctl32 -lwsock32 -lgdi32 -lcomdlg32 -lportaudio 
@@ -34,13 +35,14 @@ else
     endif
 endif
 else #BUILD_TARGET
+CFLAGS += -DFILESYSTEM_DIR="\"filesystem/$(FILESYSTEM)\""
 
-$(TARGET).zip: $(TARGET).$(EXEEXT)
+$(TARGET).zip: $(TARGET).$(EXEEXT) $(TARGET).fs_wrapper
 	mv -f $(TARGET).$(EXEEXT) deviation-$(HGVERSION).$(EXEEXT)
 	rm -f deviation-$(HGVERSION).zip
 	zip deviation-$(HGVERSION).zip deviation-$(HGVERSION).$(EXEEXT)
 ifdef WINDOWS
-	zip -u deviation-$(HGVERSION).zip libportaudio-2.dll
+	zip -uj deviation-$(HGVERSION).zip $(PORTAUDIO_DIR)/bin/libportaudio-2.dll
 endif
 ifeq "$(INCLUDE_FS)" "1"
 	zip -ur deviation-$(HGVERSION).zip filesystem/$(FILESYSTEM)
