@@ -13,11 +13,20 @@
  along with Deviation.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef OVERRIDE_PLACEMENT
 #include "common.h"
 #include "../pages.h"
 #include "gui/gui.h"
 #include "config/model.h"
 #include "standard.h"
+
+enum {
+    FIELD_X        = 77,
+    FIELD_WIDTH    = 46,
+    LABEL_X        = 0,
+    LABEL_WIDTH    = FIELD_X - LABEL_X,
+};
+#endif //OVERRIDE_PLACEMENT
 
 #if HAS_STANDARD_GUI
 #include "../../common/standard/_switchassign_page.c"
@@ -55,11 +64,9 @@ static const char *label_cb(guiObject_t *obj, const void *data)
 static int row_cb(int absrow, int relrow, int y, void *data)
 {
     (void)data;
-    u8 w = 46;
-    u8 x = 77;
-    GUI_CreateLabelBox(&gui->name[relrow], 0, y, 0, LINE_HEIGHT, &DEFAULT_FONT, label_cb, NULL, (void *)(long)absrow);
-    GUI_CreateTextSelectPlate(&gui->value[relrow], x, y,
-        w, LINE_HEIGHT, &DEFAULT_FONT, NULL, switch_cb, (void *)(long)absrow);
+    GUI_CreateLabelBox(&gui->name[relrow], LABEL_X, y, LABEL_WIDTH, LINE_HEIGHT, &LABEL_FONT, label_cb, NULL, (void *)(long)absrow);
+    GUI_CreateTextSelectPlate(&gui->value[relrow], FIELD_X, y,
+        FIELD_WIDTH, LINE_HEIGHT, &TEXTSEL_FONT, NULL, switch_cb, (void *)(long)absrow);
     return 1;
 }
 

@@ -57,7 +57,6 @@ guiObject_t *GUI_CreateTextSelect(guiTextSelect_t *select, u16 x, u16 y, enum Te
     connect_object(obj);
 
     select->state     = 0;
-    select->fontColor = 0;
     select->ValueCB   = value_cb;
     select->SelectCB  = select_cb;
     select->InputValueCB = NULL;
@@ -103,7 +102,6 @@ guiObject_t *GUI_CreateTextSelectPlate(guiTextSelect_t *select, u16 x, u16 y, u1
 
     select->button    = NULL; 
     select->state     = 0;
-    select->fontColor = 0xffff;
     select->desc       = *desc;
     select->ValueCB   = value_cb;
     select->SelectCB  = select_cb;
@@ -277,8 +275,10 @@ void GUI_TextSelectEnablePress(guiTextSelect_t *select, u8 enable)
     if (select->type == TEXTSELECT_DEVO10) { // plate text for Devo10
         if (enable)
             select->desc.style = LABEL_BOX;
-        else
-            select->desc.style = LABEL_CENTER;
+        else {
+            select->desc.style = LABEL_NO_BOX;
+            select->desc.align = ALIGN_CENTER;
+        }
         return;
     }
     enum ImageNames fileidx;

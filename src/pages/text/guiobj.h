@@ -37,7 +37,7 @@ struct mainconfig_obj {
     union {
         guiLabel_t label;
         guiButton_t button;
-    } col1[SCROLLABLE_ROWS]; 
+    } col1[SCROLLABLE_ROWS];
     guiTextSelect_t value[SCROLLABLE_ROWS];
     guiScrollable_t scrollable;
 };
@@ -132,7 +132,7 @@ struct telemcfg_obj {
 struct telemtest_obj {
     guiLabel_t msg;
     guiLabel_t header[SCROLLABLE_ROWS];
-    guiLabel_t box[20];
+    guiLabel_t box[31];
     guiScrollable_t scrollable;
 };
 
@@ -167,6 +167,7 @@ struct settimer_obj {
 #endif
 
 struct trim_obj {
+    guiLabel_t inputlbl;
     guiLabel_t steplbl;
     guiLabel_t trimposlbl;
     guiButton_t src[SCROLLABLE_ROWS];
@@ -175,6 +176,7 @@ struct trim_obj {
     guiScrollable_t scrollable;
 };
 struct trim2_obj {
+    guiLabel_t header;
     guiButton_t save;
     guiLabel_t label[SCROLLABLE_ROWS];
     guiTextSelect_t value[SCROLLABLE_ROWS];
@@ -206,10 +208,27 @@ struct calibrate_obj {
     guiLabel_t msg;
     guiLabel_t msg1;
 };
-    
+
 struct usb_obj {
     guiLabel_t label;
 };
+
+#define DEBUG_LINE_COUNT SCROLLABLE_ROWS
+struct debuglog_obj {
+    guiLabel_t      line[DEBUG_LINE_COUNT];
+    guiScrollable_t scrollable;
+};
+
+#ifdef HAS_MUSIC_CONFIG
+struct voiceconfig_obj {
+    guiLabel_t msg;
+    guiScrollable_t scrollable;
+    guiLabel_t name[SCROLLABLE_ROWS];
+    guiTextSelect_t voiceidx[SCROLLABLE_ROWS];
+    guiLabel_t voicelbl[SCROLLABLE_ROWS];
+
+};
+#endif
 
 /****Advanced ****/
 struct advcurve_obj {
@@ -265,6 +284,8 @@ struct advmixcfg_obj {
 
 /******* Standard ********/
 struct stdcurve_obj {
+    guiLabel_t title;
+    guiRect_t rect;
     guiLabel_t msg;
     guiTextSelect_t mode;
     guiTextSelect_t hold;
@@ -275,16 +296,16 @@ struct stdcurve_obj {
 };
 
 struct stddrexp_obj {
+    guiRect_t rect;
     union {
         guiLabel_t msg;
         guiTextSelect_t type;
     } u;
-    guiLabel_t label[2];
-    guiTextSelect_t value1[2];
-    guiTextSelect_t value2[2];
+    guiLabel_t label[3];
+    guiTextSelect_t value1[3];
+    guiTextSelect_t value2[3];
     guiXYGraph_t graph;
     guiScrollable_t scrollable;
-    
 };
 
 struct stdchan_obj {
@@ -293,6 +314,7 @@ struct stdchan_obj {
     guiTextSelect_t value[SCROLLABLE_ROWS];
     guiScrollable_t scrollable;
 };
+
 struct stdgyro_obj {
     guiLabel_t msg;
     guiLabel_t chanlbl;
@@ -358,6 +380,10 @@ struct gui_objs {
         struct tx_obj tx;
         struct calibrate_obj calibrate;
         struct usb_obj usb;
+        struct debuglog_obj debuglog;
+#ifdef HAS_MUSIC_CONFIG
+        struct voiceconfig_obj voiceconfig;
+#endif
 
         struct advcurve_obj advcurve;
         struct advlimit_obj advlimit;

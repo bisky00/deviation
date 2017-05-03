@@ -10,10 +10,9 @@
 #define SMALLBOX_FONT  (Display.font[4])
 #define BATTERY_FONT   (Display.font[5])
 #define BATTALARM_FONT (Display.font[6])
-#define ERROR_FONT     (Display.font[6])  //Same as BATTALARM_FONT
 #define TINY_FONT      (Display.font[7])
-#define MICRO_FONT     (Display.font[8])
-#define BOLD_FONT      (Display.font[9])
+#define LIST_FONT      (Display.font[8])
+#define LABEL_FONT     (Display.font[9])
 #define NARROW_FONT    (Display.font[10])
 #define SMALL_FONT     (Display.font[11])
 #define BIGBOXNEG_FONT   (Display.font[12])
@@ -25,7 +24,9 @@
 #define SECTION_FONT       (Display.font[18])
 #define TEXTSEL_FONT       (Display.font[19])
 #define BUTTON_FONT        (Display.font[20])
-#define NUM_LABELS 21
+#define MENU_FONT          (Display.font[21])
+#define LISTBOX_FONT       (Display.font[22])
+#define NUM_LABELS 23
 
 struct disp_keyboard {
     u16 fill_color;

@@ -42,6 +42,7 @@ static const char * const frskyx_opts[] = {
   _tr_noop("AD2GAIN"),  "0", "2000", "655361", NULL,       // big step 10, little step 1
   _tr_noop("Freq-Fine"),  "-127", "127", NULL,
   _tr_noop("Format"),  "FCC", "EU", NULL,
+  _tr_noop("RSSIChan"),  "None", "LastChan", NULL,
   NULL
 };
 enum {
@@ -49,6 +50,7 @@ enum {
     PROTO_OPTS_AD2GAIN,
     PROTO_OPTS_FREQFINE,
     PROTO_OPTS_FORMAT,
+    PROTO_OPTS_RSSICHAN,
     LAST_PROTO_OPT,
 };
 ctassert(LAST_PROTO_OPT <= NUM_PROTO_OPTS, too_many_protocol_opts);
@@ -217,7 +219,10 @@ static u16 scaleForPXX(u8 chan, u8 failsafe)
     else
         chan_val = Channels[chan];
     
-    chan_val = chan_val * STICK_SCALE / CHAN_MAX_VALUE + 1024;
+    if (Model.proto_opts[PROTO_OPTS_RSSICHAN] && (chan == Model.num_channels - 1) && !failsafe)
+        chan_val = Telemetry.value[TELEM_FRSKY_RSSI] * 21;      // Max RSSI value seems to be 99, scale it to around 2000
+    else
+        chan_val = chan_val * STICK_SCALE / CHAN_MAX_VALUE + 1024;
 
     if (chan_val > 2046)   chan_val = 2046;
     else if (chan_val < 1) chan_val = 1;
@@ -731,6 +736,7 @@ static u16 frskyx_cb() {
           seq_last_rcvd = 8;
       }
 #else
+      (void)len;
       memcpy(packet, &telem_test[telem_idx], sizeof(telem_test[0]));
       telem_idx = (telem_idx + 1) % (sizeof(telem_test)/sizeof(telem_test[0]));
       packet[1] = fixed_id & 0xff;

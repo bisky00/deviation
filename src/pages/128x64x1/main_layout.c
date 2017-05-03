@@ -65,7 +65,7 @@ void PAGE_LayoutEditInit(int page)
     lp->selected_y = 0;
     for (int i = 0 ; i < 5; i++)
         gui->desc[i] = (struct LabelDesc){
-            .font = MICRO_FONT.font,
+            .font = TINY_FONT.font,
             .font_color = 0xffff,
             .fill_color = 0x0000,
             .outline_color = 0xffff,
@@ -73,9 +73,9 @@ void PAGE_LayoutEditInit(int page)
         };
     gui->desc[1].style = LABEL_BRACKET; //Special case for trims
 
-    struct LabelDesc micro = MICRO_FONT;
-    struct LabelDesc rect = MICRO_FONT;
-    micro.style = LABEL_LEFT;
+    struct LabelDesc micro = TINY_FONT;
+    struct LabelDesc rect = TINY_FONT;
+    micro.align = ALIGN_LEFT;
     rect.fill_color = 0x0000;
     rect.outline_color = 0x0000;
     GUI_CreateRect(&gui->editelem, 41, 1, 9, 5, &rect);
@@ -159,6 +159,8 @@ static unsigned _layaction_cb(u32 button, unsigned flags, void *data)
     }
     if (! GUI_GetSelected() || flags & BUTTON_RELEASE)
         return 0;
+    if (CHAN_ButtonIsPressed(button, BUT_ENTER) && (flags & BUTTON_LONGPRESS))
+        return 1;
     if (CHAN_ButtonIsPressed(button, BUT_ENTER) && lp->selected_for_move < 0) {
         select_for_move((guiLabel_t *)GUI_GetSelected());
         return 1;

@@ -22,6 +22,7 @@
 #include "_menus.h"
 #include "config/display.h"
 #include "rtc_config.h"
+#include "voiceconfig_page.h"
 
 #define PAGE_NAME_MAX 10
 
@@ -36,6 +37,7 @@ extern struct pagemem pagemem;
 
 void PAGE_RemoveHeader();
 void PAGE_ShowHeader(const char *title);
+void PAGE_ShowHeaderWithSize(const char *title, u16 width, u16 height);
 void PAGE_ShowHeader_SetLabel(const char *(*label_cb)(guiObject_t *obj, const void *data), void *data);
 
 u8 PAGE_SetModal(u8 _modal);
@@ -156,6 +158,11 @@ void PAGE_DatalogExit();
 void PAGE_DebuglogInit();
 void PAGE_DebuglogEvent();
 void PAGE_DebuglogExit();
+
+/* Voiceconfig */
+void PAGE_VoiceconfigInit();
+void PAGE_VoiceconfigEvent();
+void PAGE_VoiceconfigExit();
 
 void PAGE_ChangeByID(enum PageID id, s8 menuPage);
 void PAGE_PushByID(enum PageID id, int page);

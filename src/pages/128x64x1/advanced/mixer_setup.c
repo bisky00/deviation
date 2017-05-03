@@ -48,15 +48,11 @@ static void _show_titlerow()
     mp->entries_per_page = 2;
     memset(gui, 0, sizeof(*gui));
 
-    labelDesc.style = LABEL_UNDERLINE;
-    labelDesc.font_color = labelDesc.fill_color = labelDesc.outline_color = 0xffff;
-    GUI_CreateLabelBox(&gui->chan, LABEL_X, 0 , TYPE_X - LABEL_X, HEADER_HEIGHT, &labelDesc,
+    GUI_CreateLabelBox(&gui->chan, LABEL_X, 0 , TYPE_X - LABEL_X, HEADER_HEIGHT, &TITLE_FONT,
             MIXPAGE_ChanNameProtoCB, NULL, (void *)((long)mp->cur_mixer->dest));
-    labelDesc.style = LABEL_CENTER;
-    GUI_CreateTextSelectPlate(&gui->tmpl, TYPE_X, 0,  TYPE_W, HEADER_WIDGET_HEIGHT, &labelDesc, NULL, templatetype_cb, (void *)((long)mp->channel));
-    GUI_CreateButtonPlateText(&gui->save, SAVE_X, 0, SAVE_W, HEADER_WIDGET_HEIGHT, &labelDesc, NULL, okcancel_cb, (void *)_tr("Save"));
+    GUI_CreateTextSelectPlate(&gui->tmpl, TYPE_X, 0,  TYPE_W, HEADER_WIDGET_HEIGHT, &TEXTSEL_FONT, NULL, templatetype_cb, (void *)((long)mp->channel));
+    GUI_CreateButtonPlateText(&gui->save, SAVE_X, 0, SAVE_W, HEADER_WIDGET_HEIGHT, &BUTTON_FONT, NULL, okcancel_cb, (void *)_tr("Save"));
 }
-
 
 static guiObject_t *simple_getobj_cb(int relrow, int col, void *data)
 {
@@ -64,6 +60,7 @@ static guiObject_t *simple_getobj_cb(int relrow, int col, void *data)
     (void)col;
     return (guiObject_t *)&gui->value[relrow];
 }
+
 enum {
     SIMPLE_OFFSET = COMMON_LAST,
     SIMPLE_LAST,
@@ -94,14 +91,13 @@ static int simple_row_cb(int absrow, int relrow, int y, void *data)
             value = set_number100_cb; data = &mp->mixer[0].offset;
             break;
     }
-    labelDesc.style = LABEL_LEFT;
-    GUI_CreateLabelBox(&gui->label[relrow].lbl, LABEL_X, y, LABEL_W, LINE_HEIGHT, &labelDesc, NULL, NULL, _tr(label));
-    labelDesc.style = LABEL_CENTER;
+    GUI_CreateLabelBox(&gui->label[relrow].lbl, LABEL_X, y, LABEL_W, LINE_HEIGHT, &LABEL_FONT, NULL, NULL, _tr(label));
     GUI_CreateTextSourcePlate(&gui->value[relrow].ts, TEXTSEL_X, y + (LINES_PER_ROW - 1) * LINE_SPACE,
-                         TEXTSEL_W, LINE_HEIGHT, &labelDesc,
+                         TEXTSEL_W, LINE_HEIGHT, &TEXTSEL_FONT,
                          tgl, value, input_value, data);
     return 1;
 }
+
 static void _show_simple()
 {
     GUI_SelectionNotify(NULL);
@@ -114,8 +110,8 @@ static void _show_simple()
 
     // The following items are not draw in the logical view;
     GUI_CreateXYGraph(&gui->graph, GRAPH_X, GRAPH_Y, GRAPH_W, GRAPH_H,
-                              CHAN_MIN_VALUE, CHAN_MIN_VALUE * 5 / 4,
-                              CHAN_MAX_VALUE, CHAN_MAX_VALUE * 5 / 4,
+                              CHAN_MIN_VALUE, CHAN_MIN_VALUE * 1251 / 1000,
+                              CHAN_MAX_VALUE, CHAN_MAX_VALUE * 1251 / 1000,
                               0, 0, eval_mixer_cb, curpos_cb, touch_cb,
                               &mp->mixer[0]);
     OBJ_SET_USED(&gui->bar, 0);
@@ -135,7 +131,7 @@ static int complex_row_cb(int absrow, int relrow, int y, void *data)
     data = NULL;
     if (absrow + COMMON_LAST == COMPLEX_TRIM) {
         GUI_CreateButtonPlateText(&gui->value[relrow].but, LABEL_X, y,
-            LABEL_W, LINE_HEIGHT, &labelDesc, show_trim_cb, toggle_trim_cb, NULL);
+            LABEL_W, LINE_HEIGHT, &BUTTON_FONT, show_trim_cb, toggle_trim_cb, NULL);
         if (! MIXER_SourceHasTrim(MIXER_SRC(mp->mixer[0].src)))
             GUI_SetHidden((guiObject_t *)&gui->label[relrow], 1);
         return 1;
@@ -174,12 +170,10 @@ static int complex_row_cb(int absrow, int relrow, int y, void *data)
             value = set_number100_cb; data = &mp->cur_mixer->offset;
             break;
     }
-    labelDesc.style = LABEL_LEFT;
     GUI_CreateLabelBox(&gui->label[relrow].lbl, LABEL_X, y, LABEL_W, LINE_HEIGHT,
-            &labelDesc, NULL, NULL, _tr(label));
-    labelDesc.style = LABEL_CENTER;
+            &LABEL_FONT, NULL, NULL, _tr(label));
     GUI_CreateTextSourcePlate(&gui->value[relrow].ts, TEXTSEL_X, y + (LINES_PER_ROW - 1) * LINE_SPACE,
-                         TEXTSEL_W, LINE_HEIGHT, &labelDesc, tgl, value, input_value, data);
+                         TEXTSEL_W, LINE_HEIGHT, &TEXTSEL_FONT, tgl, value, input_value, data);
     if (absrow + COMMON_LAST == COMPLEX_SRC)
         set_src_enable(CURVE_TYPE(&mp->cur_mixer->curve));
     return 1;
@@ -202,8 +196,8 @@ static void _show_complex(int page_change)
     GUI_CreateBarGraph(&gui->bar, LEFT_VIEW_WIDTH +10, LCD_HEIGHT - RIGHT_VIEW_HEIGHT -1, 5, RIGHT_VIEW_HEIGHT,
                               CHAN_MIN_VALUE, CHAN_MAX_VALUE, BAR_VERTICAL, eval_chan_cb, NULL);
     GUI_CreateXYGraph(&gui->graph, GRAPH_X, GRAPH_Y, GRAPH_W, GRAPH_H,
-                                  CHAN_MIN_VALUE, CHAN_MIN_VALUE * 5 / 4,
-                                  CHAN_MAX_VALUE, CHAN_MAX_VALUE * 5 / 4,
+                                  CHAN_MIN_VALUE, CHAN_MIN_VALUE * 1251 / 1000,
+                                  CHAN_MAX_VALUE, CHAN_MAX_VALUE * 1251 / 1000,
                                   0, 0, eval_mixer_cb, curpos_cb, touch_cb, mp->cur_mixer);
     if (page_change) {
         GUI_SetSelected(GUI_ShowScrollableRowOffset(&gui->scrollable, selection));
@@ -235,6 +229,7 @@ printf("Getobj: 1\n");
     printf("Getobj: label\n");
     return (guiObject_t *)&gui->label[relrow];
 }
+
 static int expo_size_cb(int absrow, void *data)
 {
     (void)data;
@@ -248,6 +243,7 @@ static int expo_size_cb(int absrow, void *data)
     }
     return LINES_PER_ROW;
 }
+
 static int expo_row_cb(int absrow, int relrow, int y, void *data)
 {
     const char *label = NULL;
@@ -310,25 +306,22 @@ static int expo_row_cb(int absrow, int relrow, int y, void *data)
     }
     int count = 1;
     if (but) {
-        labelDesc.style = LABEL_CENTER;
         GUI_CreateButtonPlateText(&gui->label[relrow].but, LABEL_X, y,
-            LABEL_W, LINE_HEIGHT, &labelDesc, label_cb, buttgl, butdata);
+            LABEL_W, LINE_HEIGHT, &BUTTON_FONT, label_cb, buttgl, butdata);
         if(disable) {
             GUI_ButtonEnable((guiObject_t *)&gui->label[relrow].but, 0);
         }
         count++;
         y += (LINES_PER_ROW - 1) * LINE_SPACE;
     } else if(label || label_cb) {
-        labelDesc.style = LABEL_LEFT;
         GUI_CreateLabelBox(&gui->label[relrow].lbl, LABEL_X, y, LABEL_W, LINE_HEIGHT,
-            &labelDesc, label_cb, NULL, label);
+            &LABEL_FONT, label_cb, NULL, label);
         if(underline)
-            GUI_CreateRect(&gui->rect1, LABEL_X, y, LABEL_W, 1, &labelDesc);
+            GUI_CreateRect(&gui->rect1, LABEL_X, y, LABEL_W, 1, &DEFAULT_FONT);
         y += (LINES_PER_ROW - 1) * LINE_SPACE;
     }
-    labelDesc.style = LABEL_CENTER;
     GUI_CreateTextSourcePlate(&gui->value[relrow].ts, TEXTSEL_X, y,
-        TEXTSEL_W, LINE_HEIGHT, &labelDesc, tgl, value, input_value, data);
+        TEXTSEL_W, LINE_HEIGHT, &TEXTSEL_FONT, tgl, value, input_value, data);
     if(disable) {
         GUI_TextSelectEnable(&gui->value[relrow].ts, 0);
     }
@@ -349,8 +342,8 @@ static void _show_expo_dr()
                         left_side_num_elements * LINE_SPACE, LINE_SPACE, EXPO_LAST, expo_row_cb, expo_getobj_cb, expo_size_cb, NULL);
     
     GUI_CreateXYGraph(&gui->graph, GRAPH_X, GRAPH_Y, GRAPH_W, GRAPH_H,
-                              CHAN_MIN_VALUE, CHAN_MIN_VALUE * 5 / 4,
-                              CHAN_MAX_VALUE, CHAN_MAX_VALUE * 5 / 4,
+                              CHAN_MIN_VALUE, CHAN_MIN_VALUE * 1251 / 1000,
+                              CHAN_MAX_VALUE, CHAN_MAX_VALUE * 1251 / 1000,
                               0, 0, eval_mixer_cb, curpos_cb, NULL, NULL);
 
     mp->cur_mixer = &mp->mixer[0];

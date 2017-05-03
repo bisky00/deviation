@@ -16,13 +16,7 @@
 #define CHAR_WIDTH 12
 #define CHAR_HEIGHT 18
 
-#if defined BUILDTYPE_DEV && ! defined EMULATOR
-//No room for debug and standard gui
- #define HAS_STANDARD_GUI   0
-#else
- #define HAS_STANDARD_GUI   1
-#endif
-
+#define HAS_STANDARD_GUI    1
 #define HAS_ADVANCED_GUI    1
 #define HAS_PERMANENT_TIMER 1
 #define HAS_TELEMETRY       1
@@ -41,10 +35,18 @@
 #define HAS_CHAR_ICONS      1
 #define HAS_VIDEO           32
 #define HAS_EXTRA_SCREEN_TUNING 1
+#define HAS_EXTENDED_AUDIO  1
+#define HAS_AUDIO_UART5     0
+#define HAS_MUSIC_CONFIG    1
 
 #define NO_LANGUAGE_SUPPORT 1
 
-#define DEBUG_WINDOW_SIZE 0
+#ifdef BUILDTYPE_DEV
+   #define DEBUG_WINDOW_SIZE 200
+#else
+   #define DEBUG_WINDOW_SIZE 0
+#endif
+
 #define MIN_BRIGHTNESS 0
 #define DEFAULT_BATTERY_ALARM 9600
 #define DEFAULT_BATTERY_CRITICAL 3900

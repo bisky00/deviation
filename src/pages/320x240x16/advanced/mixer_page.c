@@ -30,9 +30,10 @@ static void _show_title()
                           Model.num_channels + NUM_VIRT_CHANNELS - ENTRIES_PER_PAGE
                         : Model.num_channels + NUM_VIRT_CHANNELS;
     memset(gui, 0, sizeof(*gui));
-    PAGE_ShowHeader(PAGE_GetName(PAGEID_MIXER));
-    GUI_CreateIcon(&gui->testico, LCD_WIDTH-128, 0, &icons[ICON_CHANTEST], show_chantest_cb, NULL);
-    GUI_CreateIcon(&gui->reorderico, LCD_WIDTH-96, 0, &icons[ICON_ORDER], reorder_cb, NULL);
+    //PAGE_ShowHeader(PAGE_GetName(PAGEID_MIXER));
+    PAGE_ShowHeaderWithSize(PAGE_GetName(PAGEID_MIXER), LCD_WIDTH - 104, 0);
+    GUI_CreateIcon(&gui->testico, LCD_WIDTH-64, 0, &icons[ICON_CHANTEST], show_chantest_cb, NULL);
+    GUI_CreateIcon(&gui->reorderico, LCD_WIDTH-32, 0, &icons[ICON_ORDER], reorder_cb, NULL);
 }
 
 #undef XOFFSET
@@ -55,7 +56,7 @@ static int row_cb(int absrow, int relrow, int y, void *data)
         GUI_CreateButton(&gui->name[relrow].but, XOFFSET+4, row, BUTTON_64x16, MIXPAGE_ChanNameProtoCB,
                                virtname_cb, (void *)(long)ch);
     } else {
-        GUI_CreateLabelBox(&gui->name[relrow].lbl, XOFFSET+4, row, 64, 18, &DEFAULT_FONT,
+        GUI_CreateLabelBox(&gui->name[relrow].lbl, XOFFSET+4, row, 64, 18, &LABEL_FONT,
                                MIXPAGE_ChanNameProtoCB, NULL, (void *)((long)ch));
         selectable = 1;
     }

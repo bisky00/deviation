@@ -43,16 +43,16 @@ enum KeyboardType {
 
 enum LabelType {
     LABEL_NO_BOX,
-    LABEL_CENTER,
+    LABEL_CENTER,        // Left for compatibility only
     LABEL_FILL,
     LABEL_TRANSPARENT,
-    LABEL_LEFT,
-    LABEL_RIGHT,
+    LABEL_LEFT,          // Left for compatibility only
+    LABEL_RIGHT,         // Left for compatibility only
     LABEL_BOX,
+    LABEL_UNDERLINE,
 #if LCD_DEPTH == 1
     LABEL_SQUAREBOX,
     LABEL_BRACKET,
-    LABEL_UNDERLINE,
     LABEL_INVERTED,
 #else
     LABEL_LISTBOX,
@@ -60,9 +60,16 @@ enum LabelType {
 
 };
 
+enum LabelAlign {
+    ALIGN_CENTER = 0x01,
+    ALIGN_LEFT   = 0x02,
+    ALIGN_RIGHT  = 0x04,
+};
+
 struct LabelDesc {
     u8 font;
     enum LabelType style;
+    enum LabelAlign align;
     u16 font_color;
     u16 fill_color;
     u16 outline_color;
@@ -224,7 +231,6 @@ typedef struct guiTextSelect {
     const struct ImageMap *button;
     u8 state;
     enum TextSelectType type;
-    u16 fontColor;
     const char *(*ValueCB)(guiObject_t *obj, int dir, void *data);
     void (*SelectCB)(guiObject_t *obj, void *data);
     const char *(*InputValueCB)(guiObject_t *obj, int src, int value, void *data);

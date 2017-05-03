@@ -21,7 +21,7 @@
 #ifndef OVERRIDE_PLACEMENT
 
 #define RAW_FONT    DEFAULT_FONT.font
-#define CHAN_FONT   MICRO_FONT.font
+#define CHAN_FONT   TINY_FONT.font
 #define RAW_HEIGHT  (LINE_HEIGHT + 5)
 #define CHAN_HEIGHT 13
 enum {
@@ -50,27 +50,24 @@ static void draw_chan(int disp, int row, int y)
     int x = disp%2 ? LABEL_COL2_X : LABEL_COL1_X;
     int idx = row * NUM_BARS_PER_ROW + (disp%2 ? 1 : 0);
     int height;
-    struct LabelDesc labelValue = MICRO_FONT;
-    labelValue.style = LABEL_RIGHT;
+    struct LabelDesc labelValue = TINY_FONT;
+    labelValue.align = ALIGN_RIGHT;
+    struct LabelDesc labelSource = DEFAULT_FONT;
     if (cp->type == MONITOR_RAWINPUT) {
-        labelDesc.font = RAW_FONT;  // Could be translated to other languages, hence using 12normal
+        labelSource.font = RAW_FONT;  // Could be translated to other languages, hence using 12normal
         height = LINE_HEIGHT;
     } else {
-        labelDesc.font = CHAN_FONT;  // only digits, can use smaller font to show more channels
+        labelSource.font = CHAN_FONT;  // only digits, can use smaller font to show more channels
         height = LABEL_CHAN_H;
     }
     GUI_CreateLabelBox(&gui->chan[idx], x, y,
-        LABEL_IDX_W, height, &labelDesc, channum_cb, NULL, (void *)(long)get_channel_idx(disp));
+        LABEL_IDX_W, height, &labelSource, channum_cb, NULL, (void *)(long)get_channel_idx(disp));
     GUI_CreateLabelBox(&gui->value[idx], x+CHAN_X_OFFSET, y,
         LABEL_CHAN_W, height, &labelValue, value_cb, NULL, (void *)(long)disp);
     if (BAR_H) {
         GUI_CreateBarGraph(&gui->bar[idx], x, y + height,
             BAR_W, BAR_H, -125, 125, TRIM_HORIZONTAL, showchan_cb, (void *)(long)disp);
     }
-
-    // Bug fix: the labelDesc is shared in many pages, must reset it to DEFAULT_FONT after the page is drawn
-    // Otherwise, page in other language will not display as only the DEFAULT_FONT supports multi-lang
-    labelDesc.font = DEFAULT_FONT.font;
 }
 #endif
 

@@ -16,6 +16,8 @@
 #include "common.h"
 #include "pages.h"
 #include "gui/gui.h"
+#include "extended_audio.h"
+
 
 static struct splash_obj * const gui = &gui_objs.u.splash;
 
@@ -33,8 +35,8 @@ void PAGE_SplashInit(int page)
     PAGE_RemoveAllObjects();
     PAGE_SetActionCB(_action_cb);
 
-    GUI_CreateLabelBox(&gui->splash_text, 3, 5, 0, 0, &MODELNAME_FONT, NULL, NULL, _tr("Deviation"));
-    GUI_CreateLabelBox(&gui->version, 0, 8, 0, 0, &DEFAULT_FONT, NULL, NULL, DeviationVersion);
+    GUI_CreateLabelBox(&gui->splash_text, 3*ITEM_SPACE, 4*LINE_HEIGHT, 0, 0, &MODELNAME_FONT, NULL, NULL, _tr("Deviation"));
+    GUI_CreateLabelBox(&gui->version, 0, 7*LINE_HEIGHT, 0, 0, &DEFAULT_FONT, NULL, NULL, DeviationVersion);
 }
 
 static unsigned int _action_cb(u32 button, unsigned int flags, void *data)
@@ -49,12 +51,27 @@ static unsigned int _action_cb(u32 button, unsigned int flags, void *data)
 void PAGE_SplashEvent()
 {
     static unsigned int time=0;
+#if HAS_EXTENDED_AUDIO
+    static unsigned int time_startup_msg;
+#endif
     if(GUI_IsModal())
        return;
 //    u8 step = 5;
-    if ( 0 == time )
+    if ( 0 == time ) {
     	time = CLOCK_getms() + Transmitter.splash_delay * 100;
-    if ( CLOCK_getms() > time ) 
+#if HAS_EXTENDED_AUDIO
+        time_startup_msg = CLOCK_getms() + 5 * 100;	// Dealy 0.5 second to play startup audio
+#endif
+    }
+#if HAS_EXTENDED_AUDIO
+    if (time_startup_msg && (CLOCK_getms() > time_startup_msg) ) {
+        AUDIO_SetVolume();
+        MUSIC_Play(MUSIC_STARTUP);
+        time_startup_msg = 0;
+    }
+#endif
+
+    if ( CLOCK_getms() > time )
 	PAGE_ChangeByID(PAGEID_MAIN,0);
 /*     if ( offset > 0 ) {
 	offset -= step;

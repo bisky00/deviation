@@ -22,13 +22,15 @@
 #include <stdlib.h>
 
 enum {
-    LABELNUM_X        = 0,
-    LABELNUM_WIDTH    = 16,
-    LABEL_X           = 17,
-    LABEL_WIDTH       = 0,
+    LABEL_WIDTH =  0,
+    IMAGE_X     = 75,
+    IMAGE_Y     = 20,
+    IMAGE_W     = 52,
+    IMAGE_H     = 36,
+    SCROLL_W    = 75,
 };
-
 #endif //OVERRIDE_PLACEMENT
+
 #include "../common/_model_loadsave.c"
 
 static void icon_notify_cb(guiObject_t *obj)
@@ -39,13 +41,12 @@ static void icon_notify_cb(guiObject_t *obj)
     int absrow = (idx >> 8) + (idx & 0xff);
     change_icon(absrow);
 }
-    
+
 static int row_cb(int absrow, int relrow, int y, void *data)
 {
     (void)data;
-    labelDesc.style = LABEL_LEFT;
     GUI_CreateLabelBox(&gui->name[relrow], 0, y,
-        LABEL_WIDTH, LINE_HEIGHT, &labelDesc, name_cb, press_cb, (const void *)(long)absrow);
+        LABEL_WIDTH, LINE_HEIGHT, &LISTBOX_FONT, name_cb, press_cb, (const void *)(long)absrow);
     return 0;
 }
 
@@ -55,8 +56,14 @@ void PAGE_LoadSaveInit(int page)
     int num_models;
     int selected;
     int width = LCD_WIDTH;
+    
+    memset(mp, 0, sizeof(struct model_page));  // Bug fix: must initialize this
     mp->menu_type = page;
+    mp->modeltype = Model.type;
     OBJ_SET_USED(&gui->image, 0);
+
+    selected = get_scroll_count(page);
+    num_models = mp->total_items; /* set by get_scroll_count */
 
     if (page == SAVE_MODEL) {
         name = _tr("Press ENT to copy to");
@@ -64,13 +71,10 @@ void PAGE_LoadSaveInit(int page)
         name = _tr("Press ENT to load");
     }
     if (page == LOAD_ICON) {
-        width = 75;
-        GUI_CreateImage(&gui->image, 75, 20, 52, 36, mp->iconstr);
+        width = SCROLL_W;
+        GUI_CreateImage(&gui->image, IMAGE_X, IMAGE_Y, IMAGE_W, IMAGE_H, mp->iconstr);
         GUI_SelectionNotify(icon_notify_cb);
     }
-    selected = get_scroll_count(page);
-
-    num_models = mp->total_items; /* set by get_scroll_page */
     PAGE_ShowHeader(name);
     GUI_CreateScrollable(&gui->scrollable, 0, HEADER_HEIGHT, width, LCD_HEIGHT - HEADER_HEIGHT,
                          LINE_SPACE, num_models, row_cb, NULL, NULL, NULL);

@@ -17,11 +17,12 @@
 #include "common.h"
 #include "../pages.h"
 #include <stdlib.h>
+
 enum {
-    TITLE_X  = 0,
-    TITLE_W  = LCD_WIDTH - 51,
     REVERT_X = LCD_WIDTH - 62,
     REVERT_W = 54,
+    TITLE_X  = 0,
+    TITLE_W  = LCD_WIDTH - REVERT_X,
     LABEL_X  = 0,
     LABEL_W  = 63,
     TEXTSEL_X = 63,
@@ -36,11 +37,9 @@ static void _show_titlerow()
     mp->entries_per_page = 4;
     memset(gui, 0, sizeof(*gui));
 
-    labelDesc.style = LABEL_UNDERLINE;
-    GUI_CreateLabelBox(&gui->title, TITLE_X, 0 , TITLE_W, HEADER_HEIGHT, &labelDesc,
+    GUI_CreateLabelBox(&gui->title, TITLE_X, 0 , TITLE_W, HEADER_HEIGHT, &TITLE_FONT,
             MIXPAGE_ChanNameProtoCB, NULL, (void *)(long)mp->channel);
-    labelDesc.style = LABEL_CENTER;
-    GUI_CreateButtonPlateText(&gui->revert, REVERT_X, 0, REVERT_W, HEADER_WIDGET_HEIGHT, &labelDesc, NULL, revert_cb, (void *)_tr("Revert"));
+    GUI_CreateButtonPlateText(&gui->revert, REVERT_X, 0, REVERT_W, HEADER_WIDGET_HEIGHT, &BUTTON_FONT, NULL, revert_cb, (void *)_tr("Revert"));
 }
 
 static guiObject_t *getobj_cb(int relrow, int col, void *data)
@@ -101,10 +100,8 @@ static int row_cb(int absrow, int relrow, int y, void *data)
             disp = set_limits_cb; value = &mp->limit->speed;
             break;
     }
-    labelDesc.style = LABEL_LEFT;
-    GUI_CreateLabelBox(&gui->label[relrow], LABEL_X, y, LABEL_W, LINE_HEIGHT, &labelDesc, label_cb, NULL, label);
-    labelDesc.style = LABEL_CENTER;
-    GUI_CreateTextSourcePlate(&gui->value[relrow], TEXTSEL_X, y, TEXTSEL_W, LINE_HEIGHT, &labelDesc, tgl, disp, input_disp, value);
+    GUI_CreateLabelBox(&gui->label[relrow], LABEL_X, y, LABEL_W, LINE_HEIGHT, &LABEL_FONT, label_cb, NULL, label);
+    GUI_CreateTextSourcePlate(&gui->value[relrow], TEXTSEL_X, y, TEXTSEL_W, LINE_HEIGHT, &TEXTSEL_FONT, tgl, disp, input_disp, value);
 
     if(absrow == ITEM_SAFEVAL)
         GUI_TextSelectEnable(&gui->value[relrow], mp->limit->safetysw);
