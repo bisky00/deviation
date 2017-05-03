@@ -16,17 +16,6 @@
 #include "common.h"
 #include "pages.h"
 #include "gui/gui.h"
-#include "config/model.h"
-#include "config/ini.h"
-#include <stdlib.h>
 
 #define OVERRIDE_PLACEMENT
-enum {
-    ICON_X      = LCD_WIDTH/2 - 6*ITEM_SPACE,
-    ICON_W      = 12*ITEM_SPACE,
-    IMAGE_X     = LCD_WIDTH/2 - 4*ITEM_SPACE,
-    IMAGE_Y     = LCD_HEIGHT - 9*ITEM_SPACE,
-    IMAGE_W     = 6,
-    IMAGE_H     = 4,
-};
-#include "../128x64x1/model_loadsave.c"
+#include "../128x64x1/debuglog_page.c"

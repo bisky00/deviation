@@ -54,7 +54,7 @@ static void _show_titlerow()
             MIXPAGE_ChanNameProtoCB, NULL, (void *)((long)mp->cur_mixer->dest));
     labelDesc.style = LABEL_CENTER;
     GUI_CreateTextSelectPlate(&gui->tmpl, TYPE_X, 0,  TYPE_W, HEADER_WIDGET_HEIGHT, &labelDesc, NULL, templatetype_cb, (void *)((long)mp->channel));
-    GUI_CreateButtonPlateText(&gui->save, SAVE_X, 0, SAVE_W, HEADER_WIDGET_HEIGHT, &labelDesc, NULL, 0, okcancel_cb, (void *)_tr("Save"));
+    GUI_CreateButtonPlateText(&gui->save, SAVE_X, 0, SAVE_W, HEADER_WIDGET_HEIGHT, &labelDesc, NULL, okcancel_cb, (void *)_tr("Save"));
 }
 
 
@@ -114,8 +114,8 @@ static void _show_simple()
 
     // The following items are not draw in the logical view;
     GUI_CreateXYGraph(&gui->graph, GRAPH_X, GRAPH_Y, GRAPH_W, GRAPH_H,
-                              CHAN_MIN_VALUE, CHAN_MIN_VALUE * 5 / 4,
-                              CHAN_MAX_VALUE, CHAN_MAX_VALUE * 5 / 4,
+                              CHAN_MIN_VALUE, CHAN_MIN_VALUE * 1251 / 1000,
+                              CHAN_MAX_VALUE, CHAN_MAX_VALUE * 1251 / 1000,
                               0, 0, eval_mixer_cb, curpos_cb, touch_cb,
                               &mp->mixer[0]);
     OBJ_SET_USED(&gui->bar, 0);
@@ -135,7 +135,7 @@ static int complex_row_cb(int absrow, int relrow, int y, void *data)
     data = NULL;
     if (absrow + COMMON_LAST == COMPLEX_TRIM) {
         GUI_CreateButtonPlateText(&gui->value[relrow].but, LABEL_X, y,
-            LABEL_W, LINE_HEIGHT, &labelDesc, show_trim_cb, 0x0000, toggle_trim_cb, NULL);
+            LABEL_W, LINE_HEIGHT, &labelDesc, show_trim_cb, toggle_trim_cb, NULL);
         if (! MIXER_SourceHasTrim(MIXER_SRC(mp->mixer[0].src)))
             GUI_SetHidden((guiObject_t *)&gui->label[relrow], 1);
         return 1;
@@ -202,8 +202,8 @@ static void _show_complex(int page_change)
     GUI_CreateBarGraph(&gui->bar, LEFT_VIEW_WIDTH +10, LCD_HEIGHT - RIGHT_VIEW_HEIGHT -1, 5, RIGHT_VIEW_HEIGHT,
                               CHAN_MIN_VALUE, CHAN_MAX_VALUE, BAR_VERTICAL, eval_chan_cb, NULL);
     GUI_CreateXYGraph(&gui->graph, GRAPH_X, GRAPH_Y, GRAPH_W, GRAPH_H,
-                                  CHAN_MIN_VALUE, CHAN_MIN_VALUE * 5 / 4,
-                                  CHAN_MAX_VALUE, CHAN_MAX_VALUE * 5 / 4,
+                                  CHAN_MIN_VALUE, CHAN_MIN_VALUE * 1251 / 1000,
+                                  CHAN_MAX_VALUE, CHAN_MAX_VALUE * 1251 / 1000,
                                   0, 0, eval_mixer_cb, curpos_cb, touch_cb, mp->cur_mixer);
     if (page_change) {
         GUI_SetSelected(GUI_ShowScrollableRowOffset(&gui->scrollable, selection));
@@ -312,7 +312,7 @@ static int expo_row_cb(int absrow, int relrow, int y, void *data)
     if (but) {
         labelDesc.style = LABEL_CENTER;
         GUI_CreateButtonPlateText(&gui->label[relrow].but, LABEL_X, y,
-            LABEL_W, LINE_HEIGHT, &labelDesc, label_cb, 0xffff, buttgl, butdata);
+            LABEL_W, LINE_HEIGHT, &labelDesc, label_cb, buttgl, butdata);
         if(disable) {
             GUI_ButtonEnable((guiObject_t *)&gui->label[relrow].but, 0);
         }
@@ -349,8 +349,8 @@ static void _show_expo_dr()
                         left_side_num_elements * LINE_SPACE, LINE_SPACE, EXPO_LAST, expo_row_cb, expo_getobj_cb, expo_size_cb, NULL);
     
     GUI_CreateXYGraph(&gui->graph, GRAPH_X, GRAPH_Y, GRAPH_W, GRAPH_H,
-                              CHAN_MIN_VALUE, CHAN_MIN_VALUE * 5 / 4,
-                              CHAN_MAX_VALUE, CHAN_MAX_VALUE * 5 / 4,
+                              CHAN_MIN_VALUE, CHAN_MIN_VALUE * 1251 / 1000,
+                              CHAN_MAX_VALUE, CHAN_MAX_VALUE * 1251 / 1000,
                               0, 0, eval_mixer_cb, curpos_cb, NULL, NULL);
 
     mp->cur_mixer = &mp->mixer[0];
