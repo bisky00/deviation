@@ -23,11 +23,11 @@
 #define CMD_MODE() gpio_clear(GPIOC,GPIO5)
 #define DATA_MODE() gpio_set(GPIOC,GPIO5)
 
-#define SSD1306_RST_H() gpio_set(GPIOB, GPIO1)
-#define SSD1306_RST_L() gpio_clear(GPIOB, GPIO1)
+#define RST_HI() gpio_set(GPIOB, GPIO1)
+#define RST_LO() gpio_clear(GPIOB, GPIO1)
 
 //The screen is 129 characters, but we'll only expoise 128 of them
-#define PHY_LCD_WIDTH 129
+#define PHY_LCD_WIDTH 128
 #define LCD_PAGES 8
 static u8 img[PHY_LCD_WIDTH * LCD_PAGES];
 static u8 dirty[PHY_LCD_WIDTH];
@@ -72,10 +72,13 @@ void lcd_set_start_line(int line)
 
 void LCD_Contrast(unsigned contrast)
 {
+    (void)contrast;
+/*
     //int data = 0x20 + contrast * 0xC / 10;
     LCD_Cmd(0x81);
     int c = contrast * 12 + 76; //contrast should range from ~72 to ~200
     LCD_Cmd(c);
+*/
 }
 
 void LCD_Init()
@@ -90,13 +93,13 @@ void LCD_Init()
                   GPIO_CNF_OUTPUT_PUSHPULL, GPIO5);
     gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ,
                   GPIO_CNF_OUTPUT_PUSHPULL, GPIO1);
-  	SSD1306_RST_H();
-    volatile int i = 0x8000;
-    while(i) i--;
-    SSD1306_RST_L();
-    i = 0x8000;
-    while(i) i--;
-  	SSD1306_RST_H();
+  	RST_HI();
+//    volatile int i = 0x8000;
+//    while(i) i--;
+    RST_LO();
+//    i = 0x8000;
+//    while(i) i--;
+  	RST_HI();
     LCD_Cmd(0xae);//--turn off oled panel
     LCD_Cmd(0x00);//---set low column address
     LCD_Cmd(0x10);//---set high column address
